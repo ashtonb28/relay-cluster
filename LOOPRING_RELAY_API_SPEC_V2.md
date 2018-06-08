@@ -1,13 +1,13 @@
 
 # Relay API Spec V2.0
 
-Loopring Relays are nodes that act as a bridge between Ethereum nodes and Loopring compatible wallets. A relay maintain global order-books for all trading pairs and is resposible for broadcasting orders selfishlessly to selected peer-to-peer networks. 
+Loopring Relays are nodes that act as a bridge between Ethereum nodes and Loopring compatible wallets. A relay maintains global order-books for all trading pairs and is resposible for broadcasting orders trustlessly to selected peer-to-peer networks. 
 
-Wallets can host their own relay nodes to facility trading using Loopring, but can also take advantage of public relays provided by Loopring foundation or other third-parties. Order-book visulzation services or order browsers can also set up their own relay nodes to dispaly Loopring order-books to their users -- in such a senario, wallet-facing APIs can be disabled so the relay will run in a read-only mode. 
+Wallets can utilise their own relay nodes to facilitate trading using Loopring, but can also take advantage of public relays provided by Loopring foundation or other third-parties. Order-book visualization services or order browsers can also set up their own relay nodes to dispaly Loopring order-books to their users -- in such a senario, wallet-interacting APIs can be disabled so the relay will run in a read-only mode. 
 
-This document describes relay's public APIs v2.0 (JSON_RPC and SocketIO), but doesn't articulate how order-books nor trading history are maintained.
+This document describes relay's public APIs v2.0 (JSON_RPC and SocketIO), but doesn't articulate how order-books and trading history is maintained.
 
-Against v1.0 supporting array and json request format, v2.0 unifies the request params to only support json format, and add socketIO support.
+Versus the v1.0 supporting array and json request format, v2.0 unifies the request params to only support json format, and adds socketIO support.
 
 This document contains the following sections:
 - Endport
@@ -72,7 +72,7 @@ Get user's balance and token allowance info.
 
 ##### Parameters
 
-- `owner` - The address, if is null, will query all orders.
+- `owner` - The address, if is null, will end all orders.
 - `delegateAddress` - The loopring [TokenTransferDelegate Protocol](https://github.com/Loopring/token-listing/blob/master/ethereum/deployment.md).
 
 ```js
@@ -120,7 +120,7 @@ curl -X POST --data '{"jsonrpc":"2.0","method":"loopring_getBalance","params":{s
 
 #### loopring_submitOrder
 
-Submit an order. The order is submitted to relay as a JSON object, this JSON will be broadcasted into peer-to-peer network for off-chain order-book maintainance and ring-ming. Once mined, the ring will be serialized into a transaction and submitted to Ethereum blockchain.
+Submit an order. The order is submitted to the relay as a JSON object, this will be broadcasted into the peer-to-peer network for off-chain order-book maintainance and ring-ming. Once mined, the ring will be serialized into a transaction and submitted to the Ethereum blockchain.
 
 ##### Parameters
 
@@ -130,20 +130,20 @@ Submit an order. The order is submitted to relay as a JSON object, this JSON wil
   - `walletAddress` - The wallet margin address.
   - `owner` - user's wallet address
   - `AuthAddr` - The wallet auth public key.
-  - `AuthPrivateKey` - The wallet auth private key to sign ring when submitting ring.
+  - `AuthPrivateKey` - The wallet auth private key to sign when submitting a ring.
   - `tokenS` - Token to sell.
   - `tokenB` - Token to buy.
   - `amountS` - Maximum amount of tokenS to sell.
   - `amountB` - Minimum amount of tokenB to buy if all amountS sold.
   - `validSince` - Indicating when this order is created.
   - `validUntil` - How long, in seconds, will this order live.
-  - `lrcFee` - Max amount of LRC to pay for miner. The real amount to pay is proportional to fill amount.
+  - `lrcFee` - Max amount of LRC to pay a miner. The real amount to pay is proportional to fill amount.
   - `buyNoMoreThanAmountB` - If true, this order does not accept buying more than `amountB`.
   - `marginSplitPercentage` - The percentage of savings paid to miner.
   - `v` - ECDSA signature parameter v.
   - `r` - ECDSA signature parameter r.
   - `s` - ECDSA signature parameter s.
-  - `powNonce` - Order submitting must be verified by our pow check logic. If orders submitted exceeded in certain team, we will increase pow difficult.
+  - `powNonce` - Order submitting must be verified by our pow check logic. If orders submitted exceed the specified amount, we will increase pow difficulty level.
   - `orderType` - The order type, enum is (market_order|p2p_order), default is market_order.
 
 ```js
@@ -203,7 +203,7 @@ Get loopring order list.
 - `market` - The market of the order.(format is LRC-WETH)
 - `side` - The side of order. only support "buy" and "sell".
 - `orderType` - The type of order. only support "market_order" and "p2p_order", default is "market_order".
-- `pageIndex` - The page want to query, default is 1.
+- `pageIndex` - The page we want to query, default is 1.
 - `pageSize` - The size per page, default is 50.
 
 ```js
@@ -379,7 +379,7 @@ params: [{
 
 ##### Returns
 
-1. `depth` - The depth data, every depth element is a three length of array, which contain price, amount A and B in market A-B in order.
+1. `depth` - The depth data, every depth element is an array of length three, which contains price, amount A and B in market A-B in order.
 2. `market` - The market pair.
 3. `delegateAddress` - The loopring [TokenTransferDelegate Protocol](https://github.com/Loopring/token-listing/blob/master/ethereum/deployment.md).
 
